@@ -89,7 +89,7 @@ resource "template_file" "consul" {
     atlas_token             = "${var.atlas_token}"
     atlas_username          = "${var.atlas_username}"
     atlas_environment       = "${var.atlas_environment}"
-    consul_bootstrap_expect = "${var.nodes}"
+    consul_bootstrap_expect = "${length(split(",", var.private_subnets))}"
     encryption              = "${var.encryption}"
     acl_datacenter          = "${var.acl_datacenter}"
     acl_master_token        = "${var.acl_master_token}"

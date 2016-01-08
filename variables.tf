@@ -36,9 +36,6 @@ variable "acl_datacenter" {
 variable "acl_master_token" {
   default = ""
 }
-variable "acl_token" {
-  default = ""
-}
 variable "atlas_username" {}
 variable "atlas_token" {}
 variable "atlas_environment" {}
