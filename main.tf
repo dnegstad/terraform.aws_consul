@@ -102,7 +102,7 @@ resource "template_file" "consul" {
 
 resource "atlas_artifact" "consul" {
   name = "${var.atlas_username}/consul"
-  type = "amazon.image"
+  type = "amazon.ami"
 }
 
 resource "aws_instance" "consul" {
