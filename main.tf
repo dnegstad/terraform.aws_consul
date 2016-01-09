@@ -85,7 +85,7 @@ resource "template_file" "consul" {
   template = "${file(module.scripts.ubuntu_consul_setup)}"
 
   vars {
-    region                  = "${var.region}"
+    datacenter              = "${var.region}"
     atlas_token             = "${var.atlas_token}"
     atlas_username          = "${var.atlas_username}"
     atlas_environment       = "${var.atlas_environment}"
