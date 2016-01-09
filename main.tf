@@ -113,7 +113,6 @@ resource "aws_instance" "consul" {
   instance_type = "${var.instance_type}"
   key_name      = "${var.ec2_key_name}"
   subnet_id     = "${element(split(",", var.subnet_ids), count.index)}"
-  private_ip    = "${element(split(",", var.private_ips), count.index)}"
 
   instance_type = "${var.instance_type}"
 
