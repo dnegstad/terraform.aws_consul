@@ -79,6 +79,10 @@ resource "template_file" "consul_tls" {
     cert = "${var.tls_cert}"
     key  = "${var.tls_key}"
   }
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "template_file" "consul" {
