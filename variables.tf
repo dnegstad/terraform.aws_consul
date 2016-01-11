@@ -39,3 +39,6 @@ variable "acl_master_token" {
 variable "atlas_username" {}
 variable "atlas_token" {}
 variable "atlas_environment" {}
+variable "ami_artifact_version" {
+  default = "latest"
+}

@@ -2,15 +2,17 @@
 set -e
 
 METADATA_INSTANCE_ID=`curl http://169.254.169.254/2014-02-25/meta-data/instance-id`
+LOCAL_IPV4=`curl http://169.254.169.254/2014-02-25/meta-data/local-ipv4`
 
 # Report that Consul is ready to use. Consul's KV store is used in
 # Vault setup and other places, set a ready value in its KV store
 # to signify that it is ready.
 SLEEPTIME=1
-cget() { curl -sf "http://127.0.0.1:8500/v1/status/leader"; }
+cget_leader() { curl -sf "http://127.0.0.1:8500/v1/status/leader"; }
+cget_peers() { curl -sf "http://127.0.0.1:8500/v1/status/peers"; }
 
 # Wait for the Consul cluster to become ready
-while cget | grep "^\"\"$"; do
+while cget_leader | grep "^\"\"$" || ! cget_peers | grep $LOCAL_IPV4:8300; do
   if [ $SLEEPTIME -ge 24 ]; then
     echo "ERROR: CONSUL DID NOT COMPLETE SETUP! Manual intervention required on node $METADATA_INSTANCE_ID)}."
     exit 2

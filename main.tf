@@ -107,6 +107,7 @@ resource "template_file" "consul" {
 resource "atlas_artifact" "consul" {
   name = "${var.atlas_username}/consul"
   type = "amazon.ami"
+  version = "${var.ami_artifact_version}"
 }
 
 resource "aws_instance" "consul" {
