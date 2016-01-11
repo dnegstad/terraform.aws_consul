@@ -85,7 +85,7 @@ resource "aws_instance" "consul" {
   }
 
   connection {
-    user = "ubuntu"
+    user = "${var.user}"
     host = "${self.private_ip}"
     private_key = "${var.private_key}"
     bastion_host = "${var.bastion_host}"

@@ -4,6 +4,10 @@ variable "name" {
 
 variable "environment" {}
 
+variable "user" {
+  default = "ubuntu"
+}
+
 variable "region" {
   description = "AWS Region for Consul"
 }
