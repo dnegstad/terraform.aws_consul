@@ -155,6 +155,12 @@ resource "aws_instance" "consul" {
 
   # Provision the Consul server
   provisioner "remote-exec" {
+    inline = [
+    "${template_file.consul.rendered}"
+    ]
+  }
+
+  provisioner "remote-exec" {
     script = "${path.module}/wait_join.sh"
   }
 
