@@ -108,6 +108,10 @@ resource "atlas_artifact" "consul" {
   name = "${var.atlas_username}/consul"
   type = "amazon.ami"
   version = "${var.ami_artifact_version}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_instance" "consul" {
