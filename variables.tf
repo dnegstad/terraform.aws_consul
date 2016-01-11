@@ -25,6 +25,10 @@ variable "tls_key" {}
 variable "ec2_key_name" {}
 variable "private_key" {}
 
+variable "server_security_group_id" {}
+variable "agent_security_group_id" {}
+
+# Bastion configuration
 variable "bastion_host" {}
 variable "bastion_user" {}
 variable "bastion_private_key" {}

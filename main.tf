@@ -2,81 +2,16 @@ module "scripts" {
   source = "github.com/pk4media/terraform.scripts"
 }
 
-resource "aws_security_group" "server" {
-  name = "${var.name}-server"
-  description = "Consul server permissions."
-
-  vpc_id = "${var.vpc_id}"
-
-  tags {
-    Name = "${var.name}-server"
-    Environment = "${var.environment}"
-    Service = "consul"
-  }
-
-  ingress {
-    from_port = 8300
-    to_port = 8300
-    protocol = "tcp"
-    security_groups = ["${aws_security_group.agent.id}"]
-  }
-
-  ingress {
-    from_port = 8302
-    to_port = 8302
-    protocol = "tcp"
-    self = true
-  }
-
-  ingress {
-    from_port = 8302
-    to_port = 8302
-    protocol = "udp"
-    self = true
-  }
-
-  // Outbound internet access
-  egress {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
-resource "aws_security_group" "agent" {
-  name = "${var.name}-agent"
-  description = "Consul agent permissions."
-
-  vpc_id = "${var.vpc_id}"
-
-  tags {
-    Name = "${var.name}-agent"
-    Environment = "${var.environment}"
-    Service = "consul"
-  }
-
-  ingress {
-    from_port = 8301
-    to_port = 8301
-    protocol = "tcp"
-    self = true
-  }
-
-  ingress {
-    from_port = 8301
-    to_port = 8301
-    protocol = "udp"
-    self = true
-  }
-}
-
 resource "template_file" "install_ca" {
   template = "${file(module.scripts.ubuntu_install_ca)}"
 
   vars {
     name = "custom"
     ca   = "${var.ca}"
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
@@ -120,6 +55,9 @@ resource "atlas_artifact" "consul" {
 
   lifecycle {
     create_before_destroy = true
+    ignore_changes = [
+    "version"
+    ]
   }
 }
 
@@ -130,14 +68,14 @@ resource "aws_instance" "consul" {
   ami           = "${element(split(",", atlas_artifact.consul.metadata_full.ami_id), index(split(",", atlas_artifact.consul.metadata_full.region), var.region))}"
   instance_type = "${var.instance_type}"
   key_name      = "${var.ec2_key_name}"
-  subnet_id     = "${element(split(",", var.subnet_ids), count.index)}"
 
-  instance_type = "${var.instance_type}"
+  subnet_id     = "${element(split(",", var.subnet_ids), count.index)}"
+  private_ip    = "${element(split(",", var.private_ips), count.index)}"
 
   vpc_security_group_ids = [
   "${var.bastion_security_group_id}",
-  "${aws_security_group.server.id}",
-  "${aws_security_group.agent.id}"
+  "${var.server_security_group_id}",
+  "${var.agent_security_group_id}"
   ]
 
   tags {
@@ -174,5 +112,14 @@ resource "aws_instance" "consul" {
 
   lifecycle {
     create_before_destroy = true
+    prevent_destroy       = true
+    ignore_changes = [
+    "ami",
+    "instance_type",
+    "key_name",
+    "private_ip",
+    "connection",
+    "provisioner"
+    ]
   }
 }
