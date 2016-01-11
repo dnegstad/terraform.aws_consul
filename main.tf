@@ -55,9 +55,6 @@ resource "atlas_artifact" "consul" {
 
   lifecycle {
     create_before_destroy = true
-    ignore_changes = [
-    "version"
-    ]
   }
 }
 
