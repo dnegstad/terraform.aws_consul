@@ -37,7 +37,7 @@ resource "template_file" "consul" {
     atlas_token             = "${var.atlas_token}"
     atlas_username          = "${var.atlas_username}"
     atlas_environment       = "${var.atlas_environment}"
-    bootstrap_expect        = "${length(split(",", var.private_subnets))}"
+    bootstrap_expect        = "${var.nodes}"
     encryption              = "${var.encryption}"
     acl_datacenter          = "${var.acl_datacenter}"
     acl_master_token        = "${var.acl_master_token}"
@@ -62,7 +62,7 @@ resource "atlas_artifact" "consul" {
 }
 
 resource "aws_instance" "consul" {
-  count         = "${length(split(",", var.private_subnets))}"
+  count         = "${var.nodes}"
 
   # Dynamically get the appropriate Consul AMI
   ami           = "${element(split(",", atlas_artifact.consul.metadata_full.ami_id), index(split(",", atlas_artifact.consul.metadata_full.region), var.region))}"

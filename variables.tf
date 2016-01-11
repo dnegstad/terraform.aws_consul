@@ -12,9 +12,10 @@ variable "instance_type" {
   default = "t2.small"
 }
 
+variable "nodes" {}
+
 variable "vpc_id" {}
 variable "subnet_ids" {}
-variable "private_subnets" {}
 variable "private_ips" {}
 
 variable "encryption" {}
