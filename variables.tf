@@ -16,7 +16,9 @@ variable "instance_type" {
   default = "t2.small"
 }
 
-variable "nodes" {}
+variable "nodes" {
+  default = "1"
+}
 
 variable "vpc_id" {}
 variable "subnet_ids" {}
