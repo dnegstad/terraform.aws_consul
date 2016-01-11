@@ -71,6 +71,15 @@ resource "aws_security_group" "agent" {
   }
 }
 
+resource "template_file" "install_ca" {
+  template = "${file(module.scripts.ubuntu_install_ca)}"
+
+  vars {
+    name = "custom"
+    ca   = "${var.ca}"
+  }
+}
+
 resource "template_file" "consul_tls" {
   template = "${file(module.scripts.ubuntu_consul_tls_setup)}"
 
@@ -146,16 +155,15 @@ resource "aws_instance" "consul" {
     bastion_private_key = "${var.bastion_private_key}"
   }
 
-  # Copy Consul certificates
   provisioner "remote-exec" {
     inline = [
-    "${template_file.consul_tls.rendered}"
+    "${template_file.install_ca.rendered}"
     ]
   }
 
-  # Provision the Consul server
   provisioner "remote-exec" {
     inline = [
+    "${template_file.consul_tls.rendered}",
     "${template_file.consul.rendered}"
     ]
   }
